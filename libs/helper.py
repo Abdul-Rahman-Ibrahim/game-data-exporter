@@ -76,6 +76,12 @@ def get_execute_data(blockType, eventType, message, starttime, gametype, level_n
     create_count = 0
     move_count = 0
 
+    delete_count_2 = 0
+    create_count_2 = 0
+    move_count_2 = 0
+
+    player = 1
+
     for i in range(len(eventType)):
         if eventType[i] == 'execute':
             execute_time = starttime[i]
@@ -100,12 +106,18 @@ def get_execute_data(blockType, eventType, message, starttime, gametype, level_n
                 idx = i
 
             execute_count += 1
-            execute_data[execute_count] = (execute_count, execute_time, actions_count, status, player, create_count, move_count, delete_count)
+
+            execute_data[execute_count] = (execute_count, execute_time, actions_count, status, player, [create_count, create_count_2], [move_count, move_count_2], [delete_count, delete_count_2])
             actions_count = 0
+            actions_count_2 = 0
 
             delete_count = 0
             create_count = 0
             move_count = 0
+    
+            delete_count_2 = 0
+            create_count_2 = 0
+            move_count_2 = 0
 
         else:
             if eventType[i] == 'move':
@@ -114,6 +126,14 @@ def get_execute_data(blockType, eventType, message, starttime, gametype, level_n
                 delete_count += 1
             elif eventType[i] == 'create':
                 create_count += 1
+            
+            if gametype == 'cooperative':
+                if eventType[i] == 'move' and str(player) in blockType[i]:
+                    move_count_2 += 1
+                elif eventType[i] == 'delete' and str(player) in blockType[i]:
+                    delete_count_2 += 1
+                elif eventType[i] == 'create' and str(player) in blockType[i]:
+                    create_count_2 += 1
 
         actions_count += 1
 
@@ -160,10 +180,11 @@ def get_rows(stage_data, player, NUM_LEVELS, competitive=False, MAX_EXECUTION=10
                 tup = execute_data[i]
                 if player == tup[4]:
                     rows[i].append(get_date_time(tup[1])[1])
-                    rows[i].append(tup[2])
-                    rows[i].append(tup[5]) # create
-                    rows[i].append(tup[6]) # move
-                    rows[i].append(tup[7]) # delete
+                    x = tup[5][0] - tup[5][1] + tup[6][0] - tup[6][1] + tup[7][0] - tup[7][1]
+                    rows[i].append(x) # num_actions
+                    rows[i].append(tup[5][0] - tup[5][1]) # create
+                    rows[i].append(tup[6][0] - tup[6][1]) # move
+                    rows[i].append(tup[7][0] - tup[7][1]) # delete
                     rows[i].append(tup[3])
 
                     if competitive:
@@ -172,11 +193,12 @@ def get_rows(stage_data, player, NUM_LEVELS, competitive=False, MAX_EXECUTION=10
                         rows[i].append(tup[4])
                     
                 else:
-                    rows[i].append(None)
-                    rows[i].append(None)
-                    rows[i].append(None) #create
-                    rows[i].append(None) # move
-                    rows[i].append(None) # delete
+                    rows[i].append(None)   # time
+                    x = tup[5][1] + tup[6][1] + tup[7][1]
+                    rows[i].append(x) # num_actions
+                    rows[i].append(tup[5][1]) # create
+                    rows[i].append(tup[6][1]) # move
+                    rows[i].append(tup[7][1]) # delete
                     rows[i].append(None)
 
                     if competitive:
@@ -186,8 +208,8 @@ def get_rows(stage_data, player, NUM_LEVELS, competitive=False, MAX_EXECUTION=10
                     
                     
             except KeyError:
-                rows[i].append(None)
-                rows[i].append(None)
+                rows[i].append(None) # time
+                rows[i].append(None) # num_actions
                 rows[i].append(None) # create
                 rows[i].append(None) # move
                 rows[i].append(None) # delete
