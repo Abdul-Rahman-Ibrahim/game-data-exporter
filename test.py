@@ -1,17 +1,17 @@
 import os
 import json
 from libs.helper import *
-from libs.elmas.home import Home
-from libs.elmas.stages import Stages
-from libs.elmas.stage6 import Stage6
-from libs.elmas.stage1_5 import Stage1_5
-from libs.elmas.stage2_3_4 import Stage2_3_4
+from libs.sections.home import Home
+from libs.sections.stages import Stages
+from libs.sections.stage6 import Stage6
+from libs.sections.stage1_5 import Stage1_5
+from libs.sections.stage2_3_4 import Stage2_3_4
 
 
 class Game:
     def __init__(self, ID, data):
         self.ID = ID
-        self.home = Home(data[ID]['home'])
+        self.home = Home(data[ID].get('home'))
         self.main = data[ID]['main']
         self.parameters = data[ID]['parameters']
         self.stage1 = Stage1_5(data[ID]['stage1'])
@@ -24,19 +24,28 @@ class Game:
 
 
 if __name__ == '__main__':
-    GAMELOG_IN = 'gamelog_in/'
-    GAME_NAME = 'Elmas'
+    # GAMELOG_IN = 'gamelog_in/'
 
-    files = os.listdir(GAMELOG_IN)
-    json_files = [f for f in files if f.endswith('.json')]
+    logdata = 'logdata/'
+    folders = [name for name in os.listdir(logdata) if os.path.isdir(os.path.join(logdata, name))]
+
+    # files = os.listdir(GAMELOG_IN)
+    # json_files = [f for f in files if f.endswith('.json')]
 
     STAGE2DATA = []
     STAGE3DATA = []
     NUM_LEVELS = 10
-    
+
+    json_files = []
+    for folder in folders:
+        files = os.listdir(f'{logdata}/{folder}')
+        if len(files) == 0:
+            continue
+        json_files = json_files + [f'{logdata}/{folder}/{f}' for f in files if f.endswith('.json')]
+
     for json_file in json_files:
-        file_path = f'{GAMELOG_IN}/{json_file}'
-        with open(file_path, 'r') as f:
+        #file_path = f'{logdata}/{folder}/{json_file}'
+        with open(json_file, 'r') as f:
             data = json.load(f)
         
         games = []
@@ -51,6 +60,10 @@ if __name__ == '__main__':
                 selection = selections[0]
             else:
                 continue
+
+            MAIN = game.main
+            GAME_NAME = MAIN.get('gamename')
+            #print(GAME_NAME)
 
             STAGE2 = game.stage2
             STAGE3 = game.stage3
@@ -132,14 +145,16 @@ if __name__ == '__main__':
                         for exe_no, lst in rows.items():
                             STAGE3DATA.pop()                  
             
-            num_columns2 = len(student_data2) + len(lst)
-            if len(STAGE2DATA) and not all(i is None for i in STAGE2DATA[-1]):
-                STAGE2DATA.append([None] * num_columns2)
+            if (student_id_p1 and student_id_p2 and cinsiyet_p1 and cinsiyet_p2):
+                num_columns2 = len(student_data2) + len(lst)
+                if len(STAGE2DATA) and not all(i is None for i in STAGE2DATA[-1]):
+                    STAGE2DATA.append([None] * num_columns2)
 
-            num_columns3 = len(student_data3) + len(lst)
-            if len(STAGE3DATA) and not all(i is None for i in STAGE3DATA[-1]):
-                STAGE3DATA.append([None] * num_columns3)
+                num_columns3 = len(student_data3) + len(lst)
+                if len(STAGE3DATA) and not all(i is None for i in STAGE3DATA[-1]):
+                    STAGE3DATA.append([None] * num_columns3)
 
+        print(f'{folder} Completed')
     
     df2 = export_stage_data(STAGE2DATA, stage2_data, "elma_s2.xlsx", student_data2, NUM_LEVELS, 2)
     df3 = export_stage_data(STAGE3DATA, stage3_data, "elma_s3.xlsx", student_data3, NUM_LEVELS, 3)
