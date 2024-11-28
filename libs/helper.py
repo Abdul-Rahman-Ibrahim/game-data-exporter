@@ -28,6 +28,8 @@ def get_player_data(playerdata):
     grade_name = playerdata.get('grade_name', '')
     school_name = playerdata.get('school_name', '')
     student_id = playerdata.get('student_id', '')
+    if student_id == '':
+        student_id = playerdata.get('student_no', '')
     return (gametype, cinsiyet, grade_name, student_id, studentname, school_name)
 
 def get_init_row(game_ID,

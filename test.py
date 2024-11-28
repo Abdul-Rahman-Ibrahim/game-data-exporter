@@ -11,26 +11,23 @@ from libs.sections.stage2_3_4 import Stage2_3_4
 class Game:
     def __init__(self, ID, data):
         self.ID = ID
-        self.home = Home(data[ID].get('home'))
-        self.main = data[ID]['main']
-        self.parameters = data[ID]['parameters']
-        self.stage1 = Stage1_5(data[ID]['stage1'])
-        self.stage2 = Stage2_3_4(data[ID]['stage2'])
-        self.stage3 = Stage2_3_4(data[ID]['stage3'])
-        self.stage4 = Stage2_3_4(data[ID]['stage4'])
-        self.stage5 = Stage1_5(data[ID]['stage5'])
-        self.stage6 = Stage6(data[ID]['stage6'])
-        self.stages = Stages(data[ID]['stages'])
-
+        self.data = data
+        self.home = Home(data.get(ID, {}).get('home'))
+        self.main = data.get(ID, {}).get('main')
+        # self.parameters = data.get(ID, {}).get('parameters')
+        # self.stage1 = Stage1_5(data.get(ID, {}).get('stage1'))
+        self.stage2 = Stage2_3_4(data.get(ID, {}).get('stage2'))
+        self.stage3 = Stage2_3_4(data.get(ID, {}).get('stage3'))
+        self.stage4 = Stage2_3_4(data.get(ID, {}).get('stage4'))
+        # self.stage5 = Stage1_5(data.get(ID, {}).get('stage5'))
+        # self.stage6 = Stage6(data.get(ID, {}).get('stage6'))
+        # self.stages = Stages(data.get(ID, {}).get('stages'))
 
 if __name__ == '__main__':
-    # GAMELOG_IN = 'gamelog_in/'
-
+    count2 = 1
+    count3 = 1
     logdata = 'logdata/'
     folders = [name for name in os.listdir(logdata) if os.path.isdir(os.path.join(logdata, name))]
-
-    # files = os.listdir(GAMELOG_IN)
-    # json_files = [f for f in files if f.endswith('.json')]
 
     STAGE2DATA = []
     STAGE3DATA = []
@@ -44,13 +41,22 @@ if __name__ == '__main__':
         json_files = json_files + [f'{logdata}/{folder}/{f}' for f in files if f.endswith('.json')]
 
     for json_file in json_files:
-        #file_path = f'{logdata}/{folder}/{json_file}'
         with open(json_file, 'r') as f:
             data = json.load(f)
         
+        print(json_file)
+        
         games = []
         for key in data.keys():
+            if data.get(key, {}).get('home') is None:
+                continue
+            if data.get(key, {}).get('stage2') is None:
+                continue
+            if data.get(key, {}).get('stage3') is None:
+                continue
             games.append(Game(key, data))
+        
+        #print(len(games))
 
         for game in games:
             game_ID = game.ID
@@ -63,18 +69,22 @@ if __name__ == '__main__':
 
             MAIN = game.main
             GAME_NAME = MAIN.get('gamename')
-            #print(GAME_NAME)
 
             STAGE2 = game.stage2
             STAGE3 = game.stage3
 
             gametype = selection.gametype
             player1data = selection.player1data
+            if player1data is None:
+                player1data = selection.playerdata
+            #print(player1data)
             student_id_p1, cinsiyet_p1, studentname_p1, gametype_p1, grade_name_p1, grup_p1, school_name_p1, variation_p1 = (None,) * 8
             if player1data is not None and type(player1data) is not bool:
                 gametype_p1, cinsiyet_p1, grade_name_p1, student_id_p1, studentname_p1, school_name_p1 = get_player_data(player1data)
 
             player2data = selection.player2data
+            if player2data is None:
+                player2data = selection.playerdata
             student_id_p2, cinsiyet_p2, studentname_p2, gametype_p2, grade_name_p2, grup_p2, school_name_p2, variation_p2 = (None,) * 8
             if player2data is not None and type(player2data) is not bool:
                 gametype_p2, cinsiyet_p2, grade_name_p2, student_id_p2, studentname_p2, school_name_p2 = get_player_data(player2data)
@@ -96,11 +106,14 @@ if __name__ == '__main__':
                 school_name_p1, school_name_p2 = school_name_p, school_name_p
             if grade_name_p1 is None and grade_name_p2 is None:
                 grade_name_p1, grade_name_p2 = grade_name_p, grade_name_p
-            
+            # print('There')
             if (student_id_p1 and student_id_p2 and cinsiyet_p1 and cinsiyet_p2):
-
+                # print('Here1')
                 student_data2 = get_init_row(game_ID, student_id_p1, student_id_p2, cinsiyet_p1, cinsiyet_p2, grade_name_p1, grade_name_p2, gametype, school_name_p1, school_name_p2, GAME_NAME)
                 stage2_data = get_stage_data(STAGE2.player1levels, gametype, 2)
+                # if count2 == 1:
+                #     print(stage2_data)
+                #     count2 += 1
                 rows = get_rows(stage2_data, 1, NUM_LEVELS)
                 for exe_no, lst in rows.items():
                     STAGE2DATA.append(student_data2 + lst)         
@@ -124,6 +137,9 @@ if __name__ == '__main__':
 
                 student_data3 = get_init_row(game_ID, student_id_p1, student_id_p2, cinsiyet_p1, cinsiyet_p2, grade_name_p1, grade_name_p2, gametype, school_name_p1, school_name_p2, GAME_NAME)
                 stage3_data = get_stage_data(STAGE3.player1levels, gametype, 3)
+                # if count3 == 1:
+                #     print(stage3_data)
+                #     count3 += 1
                 rows = get_rows(stage3_data, 1, NUM_LEVELS)
                 for exe_no, lst in rows.items():
                     STAGE3DATA.append(student_data3 + lst)
@@ -144,7 +160,7 @@ if __name__ == '__main__':
                         pass
                         for exe_no, lst in rows.items():
                             STAGE3DATA.pop()                  
-            
+                
             if (student_id_p1 and student_id_p2 and cinsiyet_p1 and cinsiyet_p2):
                 num_columns2 = len(student_data2) + len(lst)
                 if len(STAGE2DATA) and not all(i is None for i in STAGE2DATA[-1]):
@@ -153,8 +169,6 @@ if __name__ == '__main__':
                 num_columns3 = len(student_data3) + len(lst)
                 if len(STAGE3DATA) and not all(i is None for i in STAGE3DATA[-1]):
                     STAGE3DATA.append([None] * num_columns3)
-
-        print(f'{folder} Completed')
     
     df2 = export_stage_data(STAGE2DATA, stage2_data, "elma_s2.xlsx", student_data2, NUM_LEVELS, 2)
     df3 = export_stage_data(STAGE3DATA, stage3_data, "elma_s3.xlsx", student_data3, NUM_LEVELS, 3)

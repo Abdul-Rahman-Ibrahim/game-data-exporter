@@ -35,8 +35,8 @@ class Player2Level:
 class Stage2_3_4:
     def __init__(self, stage):
         self.endtime = stage.get('endtime')
-        self.player1levels = [None] * 17
-        self.player2levels = [None] * 17
+        self.player1levels = [None] * 60
+        self.player2levels = [None] * 60
         self.starttime = stage.get('starttime')
 
         if stage.get('player1levels') is not None:

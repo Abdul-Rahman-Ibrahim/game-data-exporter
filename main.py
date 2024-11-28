@@ -91,7 +91,7 @@ if __name__ == '__main__':
                 grade_name_p1, grade_name_p2 = grade_name_p, grade_name_p
             
             if (student_id_p1 and student_id_p2 and cinsiyet_p1 and cinsiyet_p2):
-
+                print('Here')
                 student_data2 = get_init_row(game_ID, student_id_p1, student_id_p2, cinsiyet_p1, cinsiyet_p2, grade_name_p1, grade_name_p2, gametype, school_name_p1, school_name_p2, GAME_NAME)
                 stage2_data = get_stage_data(STAGE2.player1levels, gametype, 2)
                 rows = get_rows(stage2_data, 1, NUM_LEVELS)
