@@ -24,8 +24,6 @@ class Game:
         # self.stages = Stages(data.get(ID, {}).get('stages'))
 
 if __name__ == '__main__':
-    count2 = 1
-    count3 = 1
     logdata = 'logdata/'
     folders = [name for name in os.listdir(logdata) if os.path.isdir(os.path.join(logdata, name))]
 
@@ -33,18 +31,21 @@ if __name__ == '__main__':
     STAGE3DATA = []
     NUM_LEVELS = 10
 
+    total_games = 0
+
     json_files = []
     for folder in folders:
         files = os.listdir(f'{logdata}/{folder}')
         if len(files) == 0:
             continue
         json_files = json_files + [f'{logdata}/{folder}/{f}' for f in files if f.endswith('.json')]
-
+    
     for json_file in json_files:
         with open(json_file, 'r') as f:
             data = json.load(f)
         
         print(json_file)
+        total_games += 1
         
         games = []
         for key in data.keys():
@@ -55,8 +56,6 @@ if __name__ == '__main__':
             if data.get(key, {}).get('stage3') is None:
                 continue
             games.append(Game(key, data))
-        
-        #print(len(games))
 
         for game in games:
             game_ID = game.ID
@@ -77,7 +76,6 @@ if __name__ == '__main__':
             player1data = selection.player1data
             if player1data is None:
                 player1data = selection.playerdata
-            #print(player1data)
             student_id_p1, cinsiyet_p1, studentname_p1, gametype_p1, grade_name_p1, grup_p1, school_name_p1, variation_p1 = (None,) * 8
             if player1data is not None and type(player1data) is not bool:
                 gametype_p1, cinsiyet_p1, grade_name_p1, student_id_p1, studentname_p1, school_name_p1 = get_player_data(player1data)
@@ -106,14 +104,12 @@ if __name__ == '__main__':
                 school_name_p1, school_name_p2 = school_name_p, school_name_p
             if grade_name_p1 is None and grade_name_p2 is None:
                 grade_name_p1, grade_name_p2 = grade_name_p, grade_name_p
-            # print('There')
+
             if (student_id_p1 and student_id_p2 and cinsiyet_p1 and cinsiyet_p2):
-                # print('Here1')
+
                 student_data2 = get_init_row(game_ID, student_id_p1, student_id_p2, cinsiyet_p1, cinsiyet_p2, grade_name_p1, grade_name_p2, gametype, school_name_p1, school_name_p2, GAME_NAME)
                 stage2_data = get_stage_data(STAGE2.player1levels, gametype, 2)
-                # if count2 == 1:
-                #     print(stage2_data)
-                #     count2 += 1
+
                 rows = get_rows(stage2_data, 1, NUM_LEVELS)
                 for exe_no, lst in rows.items():
                     STAGE2DATA.append(student_data2 + lst)         
@@ -137,9 +133,7 @@ if __name__ == '__main__':
 
                 student_data3 = get_init_row(game_ID, student_id_p1, student_id_p2, cinsiyet_p1, cinsiyet_p2, grade_name_p1, grade_name_p2, gametype, school_name_p1, school_name_p2, GAME_NAME)
                 stage3_data = get_stage_data(STAGE3.player1levels, gametype, 3)
-                # if count3 == 1:
-                #     print(stage3_data)
-                #     count3 += 1
+
                 rows = get_rows(stage3_data, 1, NUM_LEVELS)
                 for exe_no, lst in rows.items():
                     STAGE3DATA.append(student_data3 + lst)
@@ -170,6 +164,7 @@ if __name__ == '__main__':
                 if len(STAGE3DATA) and not all(i is None for i in STAGE3DATA[-1]):
                     STAGE3DATA.append([None] * num_columns3)
     
+    #print(total_games)
     df2 = export_stage_data(STAGE2DATA, stage2_data, "elma_s2.xlsx", student_data2, NUM_LEVELS, 2)
     df3 = export_stage_data(STAGE3DATA, stage3_data, "elma_s3.xlsx", student_data3, NUM_LEVELS, 3)
 
