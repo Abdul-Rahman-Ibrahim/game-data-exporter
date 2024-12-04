@@ -44,7 +44,7 @@ if __name__ == '__main__':
         with open(json_file, 'r') as f:
             data = json.load(f)
         
-        print(json_file)
+        #print(json_file)
         total_games += 1
         
         games = []
@@ -74,6 +74,8 @@ if __name__ == '__main__':
 
             gametype = selection.gametype
             player1data = selection.player1data
+            school_tmp = selection.school
+
             if player1data is None:
                 player1data = selection.playerdata
             student_id_p1, cinsiyet_p1, studentname_p1, gametype_p1, grade_name_p1, grup_p1, school_name_p1, variation_p1 = (None,) * 8
@@ -105,7 +107,10 @@ if __name__ == '__main__':
             if grade_name_p1 is None and grade_name_p2 is None:
                 grade_name_p1, grade_name_p2 = grade_name_p, grade_name_p
 
+            school_name_p1, school_name_p2 = school_tmp, school_tmp
             if (student_id_p1 and student_id_p2 and cinsiyet_p1 and cinsiyet_p2):
+                if gametype == 'cooperative':
+                    print(school_name_p1, school_name_p2)
 
                 student_data2 = get_init_row(game_ID, student_id_p1, student_id_p2, cinsiyet_p1, cinsiyet_p2, grade_name_p1, grade_name_p2, gametype, school_name_p1, school_name_p2, GAME_NAME)
                 stage2_data = get_stage_data(STAGE2.player1levels, gametype, 2)
