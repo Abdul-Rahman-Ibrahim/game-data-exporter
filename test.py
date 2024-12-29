@@ -108,9 +108,9 @@ if __name__ == '__main__':
                 grade_name_p1, grade_name_p2 = grade_name_p, grade_name_p
 
             school_name_p1, school_name_p2 = school_tmp, school_tmp
-            if (student_id_p1 and student_id_p2 and cinsiyet_p1 and cinsiyet_p2):
-                if gametype == 'cooperative':
-                    print(school_name_p1, school_name_p2)
+            if (student_id_p1 and student_id_p2):
+                # if gametype == 'cooperative':
+                #     print(school_name_p1, school_name_p2)
 
                 student_data2 = get_init_row(game_ID, student_id_p1, student_id_p2, cinsiyet_p1, cinsiyet_p2, grade_name_p1, grade_name_p2, gametype, school_name_p1, school_name_p2, GAME_NAME)
                 stage2_data = get_stage_data(STAGE2.player1levels, gametype, 2)
@@ -138,7 +138,6 @@ if __name__ == '__main__':
 
                 student_data3 = get_init_row(game_ID, student_id_p1, student_id_p2, cinsiyet_p1, cinsiyet_p2, grade_name_p1, grade_name_p2, gametype, school_name_p1, school_name_p2, GAME_NAME)
                 stage3_data = get_stage_data(STAGE3.player1levels, gametype, 3)
-
                 rows = get_rows(stage3_data, 1, NUM_LEVELS)
                 for exe_no, lst in rows.items():
                     STAGE3DATA.append(student_data3 + lst)
@@ -160,7 +159,7 @@ if __name__ == '__main__':
                         for exe_no, lst in rows.items():
                             STAGE3DATA.pop()                  
                 
-            if (student_id_p1 and student_id_p2 and cinsiyet_p1 and cinsiyet_p2):
+            if (student_id_p1 and student_id_p2):
                 num_columns2 = len(student_data2) + len(lst)
                 if len(STAGE2DATA) and not all(i is None for i in STAGE2DATA[-1]):
                     STAGE2DATA.append([None] * num_columns2)

@@ -130,6 +130,8 @@ def get_execute_data(blockType, eventType, message, starttime, gametype, level_n
                 create_count += 1
             
             if gametype == 'cooperative':
+                if blockType[i] is None:
+                    continue
                 if eventType[i] == 'move' and str(player) in blockType[i]:
                     move_count_2 += 1
                 elif eventType[i] == 'delete' and str(player) in blockType[i]:

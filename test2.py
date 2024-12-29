@@ -109,7 +109,7 @@ if __name__ == '__main__':
                 grade_name_p1, grade_name_p2 = grade_name_p, grade_name_p
 
             school_name_p1, school_name_p2 = school_tmp, school_tmp
-            if (student_id_p1 and student_id_p2 and cinsiyet_p1 and cinsiyet_p2):
+            if (student_id_p1 and student_id_p2):
                 continue
                 if gametype == 'cooperative':
                     print(school_name_p1, school_name_p2)
